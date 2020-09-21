@@ -2,6 +2,10 @@
   "language": "python",
   "app": "pipenv run ./main.py",
   "terraformProviders": ["aws@~> 2.0"],
-  "terraformModules": ["terraform-aws-modules/vpc/aws","terraform-aws-modules/lambda/aws"],
+  "terraformModules": [
+    "terraform-aws-modules/vpc/aws",
+    "terraform-aws-modules/lambda/aws",
+    "terraform-aws-modules/s3-bucket/aws",
+    "terraform-aws-modules/apigateway-v2/aws"],
   "codeMakerOutput": "imports"
 }
