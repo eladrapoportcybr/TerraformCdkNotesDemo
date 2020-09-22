@@ -9,16 +9,17 @@ region = 'eu-central-1'
 
 
 def add_gateway_method(scope: Construct, http_method: str, handler: str, api_gw: ApiGatewayRestApi, resource, role_arn: str, user_id):
-    fn = LambdaFunction(scope, f"{stack_prefix}lambda-{handler[:3]}", function_name=f"{stack_prefix}lambda{handler[:3]}",
+    suffix = handler[:3]
+    fn = LambdaFunction(scope, f"{stack_prefix}lambda-{suffix}", function_name=f"{stack_prefix}lambda{suffix}",
                         handler=f"notes_handler.{handler}",
                         runtime="python3.7", role=role_arn, timeout=60,
                         filename=f"{os.getcwd()}/notes_handler.zip")
-    method = ApiGatewayMethod(scope, f"api-gateway-method-{handler[:3]}", rest_api_id=api_gw.id, resource_id=resource.id, http_method=http_method,
+    method = ApiGatewayMethod(scope, f"api-gateway-method-{suffix}", rest_api_id=api_gw.id, resource_id=resource.id, http_method=http_method,
                               authorization="NONE")
-    integration = ApiGatewayIntegration(scope, f"api-gateway-integration-{handler[:3]}", rest_api_id=api_gw.id, resource_id=resource.id,
+    integration = ApiGatewayIntegration(scope, f"api-gateway-integration-{suffix}", rest_api_id=api_gw.id, resource_id=resource.id,
                                         http_method=method.http_method, integration_http_method="POST", type="AWS_PROXY",
                                         uri=fn.invoke_arn, depends_on=[method])
-    LambdaPermission(scope, f"{stack_prefix}lambda-permission-{handler[:3]}", action="lambda:InvokeFunction", principal="apigateway.amazonaws.com",
+    LambdaPermission(scope, f"{stack_prefix}lambda-permission-{suffix}", action="lambda:InvokeFunction", principal="apigateway.amazonaws.com",
                      function_name=fn.function_name, source_arn=
                      f"arn:aws:execute-api:{region}:{user_id.account_id}:{api_gw.id}/*/{method.http_method}{resource.path}")
     return [method, integration]
