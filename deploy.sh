@@ -1,4 +1,4 @@
 #!/bin/bash
 
-zip hello_world2.zip hello_world.py
-cdktf deploy --auto-deploy
+zip notes_handler.zip notes_handler.py
+cdktf deploy --auto-approve
